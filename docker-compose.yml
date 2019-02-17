@@ -1,0 +1,25 @@
+version: '3.1'
+
+services:
+
+  keycloak:
+    image: jboss/keycloak
+    restart: always
+    ports:
+      - 8080:8080
+    environment:
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: secret
+      DB_VENDOR: postgres
+      DB_ADDR: db
+      DB_DATABASE: keycloak
+      DB_USER: keycloak
+      DB_PASSWORD: keycloak
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak
