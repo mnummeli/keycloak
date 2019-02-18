@@ -4,9 +4,12 @@ services:
 
   keycloak:
     image: jboss/keycloak
+    depends_on:
+      - db
+      - ldap
     restart: always
     ports:
-      - 8080:8080
+      - "8080:8080"
     environment:
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: secret
@@ -19,7 +22,31 @@ services:
   db:
     image: postgres
     restart: always
+    ports:
+      - "15432:5432"
     environment:
       POSTGRES_DB: keycloak
       POSTGRES_USER: keycloak
       POSTGRES_PASSWORD: keycloak
+    volumes:
+      - "dbdata:/var/lib/postgresql/data"
+
+  # Use this for testing possible Keycloak user federation
+  ldap:
+    image: osixia/openldap
+    restart: always
+    ports:
+      - "10389:389"
+      - "10636:636"
+    environment:
+      LDAP_ORGANISATION: "IDM"
+      LDAP_DOMAIN: "idm"
+      LDAP_ADMIN_PASSWORD: Pass1234
+    volumes:
+      - "ldapdata:/var/lib/ldap"
+      - "ldapconfig:/etc/ldap/slapd.d"
+
+volumes:
+  dbdata:
+  ldapdata:
+  ldapconfig:
